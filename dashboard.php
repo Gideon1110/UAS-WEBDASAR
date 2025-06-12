@@ -1,186 +1,123 @@
 <?php
 session_start();
 
+// Redirect ke login jika belum login
 if (!isset($_SESSION['username'])) {
     header("Location: login.php");
-    exit();
+   
 }
 
-$username = $_SESSION['username'];
-$login_count = $_SESSION['login_count'];
-
-$register_success = '';
-$register_error = '';
-
-if (!isset($_SESSION['daftar'])) {
-    $_SESSION['daftar'] = []; // inisialisasi jika belum ada
+if (!isset($_SESSION["counter"])) {
+    $_SESSION["counter"] = 1;
+} else {
+    $_SESSION["counter"]++;
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nama = trim($_POST['nama'] ?? '');
-    $umur = trim($_POST['umur'] ?? '');
+if (!isset($_SESSION["daftar"])) {
+    $_SESSION["daftar"] = [];
+}
 
-    if ($nama && $umur) {
-        $daftar = [
-            "nama" => $nama,
-            "umur" => $umur
-        ];
+if (isset($_POST["nama"]) && isset($_POST["umur"])) {
+    $daftar = [
+        "nama" => $_POST["nama"],
+        "umur" => $_POST["umur"]
+    ];
 
-        $_SESSION['daftar'][] = $daftar;
-
-        $register_success = "Pengguna <strong>" . htmlspecialchars($nama) . "</strong> berhasil didaftarkan.";
-    } else {
-        $register_error = "Semua field harus diisi.";
-    }
+    $_SESSION["daftar"][] = $daftar;
 }
 ?>
 
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-    <meta charset="UTF-8">
     <title>Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <style>
+    <style type="text/css">
         body {
-            font-family: 'Poppins', sans-serif;
-            background: #f7f9fc;
-            height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            height: 100vh;
+            background-size: cover;
+            background-image: url("https://cdn.arstechnica.net/wp-content/uploads/2023/06/bliss-update-1440x960.jpg");
         }
 
-        .card {
-            background-color: #fff;
-            padding: 40px 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-            text-align: center;
-            width: 100%;
-            max-width: 450px;
+        table {
+            background-color: white;
+            border: 3px solid grey;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: Arial, Helvetica, sans-serif;
         }
 
-        h1 {
-            font-size: 22px;
-            margin-bottom: 10px;
-        }
-
-        .highlight {
-            font-weight: 600;
-            color: #007bff;
-        }
-
-        .section-title {
-            font-weight: 600;
-            margin: 20px 0 10px;
-            font-size: 16px;
-            text-align: left;
-        }
-
-        form {
-            margin-top: 10px;
-            text-align: left;
-        }
-
-        input[type="text"], input[type="number"] {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            font-size: 14px;
+        td {
+            padding: 5px;
         }
 
         button {
-            width: 100%;
-            background-color: #007bff;
-            color: white;
+            background-color: greenyellow;
             padding: 10px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s ease;
+            border-radius: 5px;
+            cursor: pointer; 
         }
 
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        .logout-btn {
-            margin-top: 15px;
-            background-color: #e74c3c;
-        }
-
-        .logout-btn:hover {
-            background-color: #c0392b;
-        }
-
-        .message {
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-
-        .success {
-            background-color: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .error {
-            background-color: #fdecea;
-            color: #c62828;
-        }
-
-        .user-list {
-            margin-top: 20px;
-            text-align: left;
-        }
-
-        .user-list ul {
-            list-style: none;
-            padding-left: 0;
-        }
-
-        .user-list li {
-            padding: 6px 0;
-            border-bottom: 1px solid #eee;
-            font-size: 14px;
+        #logout {
+            background-color: rgb(236, 80, 80);
         }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>👋 Selamat Datang, <span class="highlight"><?= htmlspecialchars($username); ?></span></h1>
-        <p>Login ke-<span class="highlight"><?= $login_count; ?></span></p>
+    <h1><?php echo "Selamat datang " . $_SESSION['username'] . " Ke-" . $_SESSION["counter"]; ?></h1>
 
-        <div class="section-title">📝 Pendaftaran Pengguna</div>
-        <form method="post">
-            <input type="text" name="nama" placeholder="Nama Lengkap" required>
-            <input type="number" name="umur" placeholder="Umur" required>
-            <button type="submit">Daftar</button>
+    <form action="dashboard.php" method="post">
+        <table>
+            <tr>
+                <td colspan="2" style="text-align: center;">DAFTAR</td>
+            </tr>
+            <tr>
+                <td>Nama</td>
+                <td><input type="text" name="nama" required /></td>
+            </tr>
+            <tr>
+                <td>Umur</td>
+                <td><input type="number" name="umur" required /></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: center;">
+                    <button type="submit">SUBMIT</button>
+                    <a href="logout.php">
+                        <button id="logout" type="button">LOGOUT</button>
+                    </a>
+                </td>
+            </tr>
+        </table>
+    </form>
 
-            <?php if ($register_success): ?>
-                <div class="message success"><?= $register_success ?></div>
-            <?php elseif ($register_error): ?>
-                <div class="message error"><?= $register_error ?></div>
-            <?php endif; ?>
-        </form>
-
-        <div class="user-list">
-            <div class="section-title">👥 Daftar Pengguna:</div>
-            <ul>
-                <?php foreach ($_SESSION['daftar'] as $user): ?>
-                    <li><?= htmlspecialchars($user['nama']) ?> (<?= htmlspecialchars($user['umur']) ?> tahun)</li>
-                <?php endforeach; ?>
-            </ul>
-        </div>
-
-        <form action="logout.php" method="post">
-            <button type="submit" class="logout-btn">Logout</button>
-        </form>
-    </div>
+    <table border="1">
+        <tr>
+            <th>Nama</th>
+            <th>Umur</th>
+            <th>Keterangan</th>
+        </tr>
+        <?php foreach ($_SESSION["daftar"] as $daftar_item): ?>
+            <tr>
+                <td><?php echo $daftar_item["nama"]; ?></td>
+                <td><?php echo $daftar_item["umur"]; ?></td>
+                <td>
+                    <?php
+                    if ($daftar_item["umur"] < 20) {
+                        echo "remaja";
+                    } elseif ($daftar_item["umur"] >= 20 && $daftar_item["umur"] < 40) {
+                        echo "dewasa";
+                    } elseif ($daftar_item["umur"] >= 40) {
+                        echo "tua";
+                    } else {
+                        echo "tidak ditemukan";
+                    }
+                    ?></td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+    </from>
 </body>
 </html>
