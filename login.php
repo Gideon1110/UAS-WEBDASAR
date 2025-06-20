@@ -1,7 +1,6 @@
 <?php
 session_start();
 if (isset($_POST['username']) && isset($_POST['password'])) {
-    // User is already logged in, redirect to welcome page  
     $username = $_POST['username'];
     $password = $_POST['password'];
     if ($username == "usm" && $password == "123") {
