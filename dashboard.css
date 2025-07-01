@@ -1,0 +1,25 @@
+/* dashboard.css */
+body {
+  font-size: .875rem;
+}
+
+.chart-container {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  height: 380px;
+  margin: auto;
+}
+
+
+.navbar-brand {
+  font-size: 1rem;
+}
+
+.nav-link.active {
+  color: #0d6efd;
+}
+
+.main-content {
+  margin-left: calc(2rem + var(--bs-gutter-x)); /* beri padding agar tidak menempel */
+}
